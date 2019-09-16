@@ -8,10 +8,22 @@ output:
 
 ## Loading and preprocessing the data
 
+```{r}
+act<- read.csv(unz("activity.zip", "activity.csv"))
+act$date<-as.Date(as.character(act$date))
+summary(act)
+head(act)
+str(act)
+```
 
 
 ## What is mean total number of steps taken per day?
 
+```{r}
+library(plyr)
+means<-ddply(act,"date", summarise, mean=mean(steps)) #mean steps by date
+
+```
 
 
 ## What is the average daily activity pattern?
