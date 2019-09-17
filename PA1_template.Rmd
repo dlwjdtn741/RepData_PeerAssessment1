@@ -8,15 +8,62 @@ output:
 
 ## Loading and preprocessing the data
 
+1. Load the data
+```{r}
+act<-read.csv(unzip("activity.zip", "activity.csv"))    #load data
+```
+
+2. Process/transform the data (if necessary) into a format suitable for your analysis
+```{r}
+str(act)            #date column is factor. need to change to date. step column has many NA 
+summary(act)        #all positive value.
+
+unique(is.na(act$interval))
+unique(is.na(act$date))         #only step column has NA values
+
+act$date<-as.Date(as.character(act$date))     #change to date from factor
+```
 
 
 ## What is mean total number of steps taken per day?
 
+1. Calculate the total number of steps taken per day
+```{r}
+sum1<-tapply(act$steps, act$date, sum)
+sum2<-data.frame(date=names(sum1), sum=sum1)    
+#according to the total sums, 10/1, 10/8, 11/1, 11/4, 11/9, 11/10, 11/14, 11/30 has NA sum.
+#needs to check if all steps value are NA for all the entries for these dates or if R produced NA for even just one NA value
+library(dplyr)
+NAs<-filter(act, date %in% as.Date(as.character(sum2[is.na(sum2$sum),1])))    # find all rows with the date's total sum equals NA
+unique(NAs$steps)     #check if there is any other value than NA. It seems like all values are NA.
+
+#Total number of steps take per day is
+sum2<-sum2[!is.na(sum2$sum),]
+sum2
+
+
+```
+
+
+2. Make a histogram of the total number of steps taken each day
+
+```{r}
+hist(sum2$sum,main="Total step histogram", xlab="Total steps per day")
+```
+
+3. Calculate and report the mean and median of the total number of steps taken per day
+
+```{r}
+summary(sum2)     #mean=10766 median=10765
+```
 
 
 ## What is the average daily activity pattern?
 
+1. Make a time series plot (i.e.type="l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis)
 
+
+2. Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?
 
 ## Imputing missing values
 
