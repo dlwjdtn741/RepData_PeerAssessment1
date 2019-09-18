@@ -88,7 +88,7 @@ nrow(act[is.na(act$steps),])  #2304 NA value
 
 2. Devise a strategy for filling in all of the missing values in the dataset. The strategy does not need to be sophisticated. For example, you could use the mean/median for that day, or the mean for that 5-minute interval, etc.
 
-
+I will use the mean for the 5-min interval to fill the missing values in the dataset.
 
 3. Create a new dataset that is equal to the original dataset but with the missing data filled in.
 ```{r}
@@ -101,9 +101,29 @@ for (i in 1:length(NA_r)) {
 ```
 
 
-
-
 4. Make a histogram of the total number of steps taken each day and Calculate and report the mean and median total number of steps taken per day. Do these values differ from the estimates from the first part of the assignment? What is the impact of imputing missing data on the estimates of the total daily number of steps?
 
+```{r}
+sum3<-act_r %>% group_by(date) %>% summarize(sum=sum(steps))
+hist(sum3$sum, main="Total step histogram with revised dataset", xlab="Total steps per day")    #histogram
+
+summary(sum3)   # mean=10766, median=10766
+```
+
+In my case, the median changes. By replacing the NA values with the respective average 5-min invertal steps values, 8 more elements were added compared to the first part. Since 8 of 10766.19 were added to the sum dataset, we can see the histogram got taller between the 10000~15000 and the median shifted to 10766.19 as well.
 
 ## Are there differences in activity patterns between weekdays and weekends?
+For this part the weekdays() function may be of some help here. Use the dataset with the filled-in missing values for this part.
+
+1. Create a new factor variable in the dataset with two levels – “weekday” and “weekend” indicating whether a given date is a weekday or weekend day.
+
+```{r}
+act_w<-act_r
+act_w$wdy<-weekdays(act_r$date)
+act_w$wkdy<-"Weekday" #make all weekday
+act_w$wkdy[which(act_r$wdy=="Sunday"|act_r$wdy=="Saturday")]<-"Weekend" #make saturday and sunday weekend
+
+```
+
+
+2. Make a panel plot containing a time series plot (i.e. type="l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all weekday days or weekend days (y-axis). See the README file in the GitHub repository to see an example of what this plot should look like using simulated data.
